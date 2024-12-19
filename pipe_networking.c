@@ -11,11 +11,22 @@
   =========================*/
 int server_setup() {
   int from_client = 0;
+  if (mkfifo(WKP, 0666) == -1) {
+    error();
+  }
+  int fd = open(WKP, O_WRONLY);
+  if (fd == -1) {
+    error();
+  }
+  char * PP = itoa(getpid());
+  from_client = open(PP, O_RDONLY);
+  close(fd);
+
   return from_client;
 }
 
 /*=========================
-  server_handshake 
+  server_handshake
   args: int * to_client
 
   Performs the server side pipe 3 way handshake.
@@ -24,6 +35,8 @@ int server_setup() {
   returns the file descriptor for the upstream pipe (see server setup).
   =========================*/
 int server_handshake(int *to_client) {
+  server_setup();
+
   int from_client;
   return from_client;
 }
@@ -56,5 +69,3 @@ int server_connect(int from_client) {
   int to_client  = 0;
   return to_client;
 }
-
-
