@@ -14,14 +14,11 @@ int server_setup() {
   if (mkfifo(WKP, 0666) == -1) {
     error();
   }
-  int fd = open(WKP, O_WRONLY);
-  if (fd == -1) {
+  from_client = open(WKP, O_RDONLY);
+  if (from_client == -1) {
     error();
   }
-  char * PP = itoa(getpid());
-  from_client = open(PP, O_RDONLY);
-  close(fd);
-
+  remove(WKP);
   return from_client;
 }
 
