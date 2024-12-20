@@ -12,11 +12,13 @@
 int server_setup() {
   int from_client = 0;
   if (mkfifo(WKP, 0666) == -1) {
-    error();
+    perror("server create WKP fail");
+    exit(1);
   }
   from_client = open(WKP, O_RDONLY);
   if (from_client == -1) {
-    error();
+    perror("open WKP fail")
+    exit(1);
   }
   remove(WKP);
   return from_client;
@@ -32,9 +34,10 @@ int server_setup() {
   returns the file descriptor for the upstream pipe (see server setup).
   =========================*/
 int server_handshake(int *to_client) {
-  server_setup();
+  int from_client = server_setup();
+  open(form_client, O_WRONLY);
 
-  int from_client;
+  // send SYN ACK
   return from_client;
 }
 
@@ -49,7 +52,19 @@ int server_handshake(int *to_client) {
   returns the file descriptor for the downstream pipe.
   =========================*/
 int client_handshake(int *to_server) {
-  int from_server;
+  char PP_name[100];
+  sprintf(PP_name, "%d", getpid());
+  if (mkfifo(PP_name, 0666) == -1) {
+    perror("create PP fail");
+    exit(1);
+  }
+  int from_server = open(WKP, O_WRONLY);
+  if (from_server == -1) {
+    perror("client fail to open WKP");
+    exit(1);
+  }
+  // send PP name to server 
+  write(from_server, PP_name, strlen(PP_name) + 1);
   return from_server;
 }
 
