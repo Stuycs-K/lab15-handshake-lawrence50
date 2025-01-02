@@ -10,6 +10,8 @@
   returns the file descriptor for the upstream pipe.
   =========================*/
 int server_setup() {
+  printf("-- server_setup() --\n");
+
   printf("server making pipe\n");
   if (mkfifo(WKP, 0666) == -1) {
     perror("server create WKP fail");
@@ -19,7 +21,7 @@ int server_setup() {
   printf("server opening WKP (blocking)\n");
   int from_client = open(WKP, O_RDONLY);
   if (from_client == -1) {
-    perror("open WKP fail")
+    perror("open WKP fail");
     exit(1);
   }
 
@@ -40,6 +42,8 @@ int server_setup() {
   returns the file descriptor for the upstream pipe (see server setup).
   =========================*/
 int server_handshake(int *to_client) {
+  printf("-- server_handshake() --\n");
+
   int from_client = server_setup();
   // server gets message from client (PP name)
   printf("server reading SYN (pid)\n");
@@ -77,7 +81,7 @@ int server_handshake(int *to_client) {
     exit(1);
   }
   printf("server received ACK, handshake complete\n");
-  
+
   printf("-- end server_handshake() --\n");
   return from_client;
 }
@@ -93,6 +97,8 @@ int server_handshake(int *to_client) {
   returns the file descriptor for the downstream pipe.
   =========================*/
 int client_handshake(int *to_server) {
+  printf("-- client_handshake() --\n");
+
   // client creates private pipe with PID as name 
   printf("client making PP\n");
   char PP_name[HANDSHAKE_BUFFER_SIZE];
@@ -104,15 +110,15 @@ int client_handshake(int *to_server) {
 
   // open WKP (upstream) to write
   printf("client opening WKP (unblock server)\n");
-  to_server = open(WKP, O_WRONLY);
-  if (to_server == -1) {
+  *to_server = open(WKP, O_WRONLY);
+  if (*to_server == -1) {
     perror("client fail to open WKP");
     exit(1);
   }
 
   // send PP name (SYN) to server 
   printf("client writing PP to WKP\n");
-  write(to_server, PP_name, strlen(PP_name) + 1);
+  write(*to_server, PP_name, strlen(PP_name) + 1);
 
   // open PP and block
   printf("client opening PP (blocks)\n");
@@ -140,7 +146,7 @@ int client_handshake(int *to_server) {
   int rand_int;
   sscanf(buffer, "%d", &rand_int);
   sprintf(buffer, "%d", rand_int + 1);
-  write(to_server, buffer, strlen(buffer) + 1);
+  write(*to_server, buffer, strlen(buffer) + 1);
 
   printf("-- end client_handshake() --\n");
   return from_server;
