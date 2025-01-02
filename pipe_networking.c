@@ -51,6 +51,20 @@ int server_handshake(int *to_client) {
   int rand_int = rand(); 
   sprintf(buffer, "%d", rand_int);
   write(*to_client, buffer, strlen(buffer) + 1);
+
+  // read 2nd acknowledgement 
+  if (read(from_client, buffer, HANDSHAKE_BUFFER_SIZE) < 0) {
+    perror("server couldn't read final acknowledgement");
+    exit(1);
+  }
+  // verify
+  int ack;
+  sscanf(buffer, "%d", &ack);
+  if (ack != rand_int + 1) {
+    perror("something went wrong");
+    exit(1);
+  }
+
   return from_client;
 }
 
@@ -96,7 +110,11 @@ int client_handshake(int *to_server) {
   remove(PP_name);
 
   // send final acknowledgement to server (same rand_int + 1)
-  
+  int rand_int;
+  sscanf(buffer, "%d", &rand_int);
+  sprintf(buffer, "%d", rand_int + 1);
+  write(to_server, buffer, strlen(buffer) + 1);
+
   return from_server;
 }
 
