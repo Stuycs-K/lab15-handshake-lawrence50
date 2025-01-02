@@ -6,4 +6,6 @@ int main() {
   int from_server;
 
   from_server = client_handshake( &to_server );
+  // write a byte to server
+  // read a byte from server 
 }

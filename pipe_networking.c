@@ -35,7 +35,7 @@ int server_setup() {
   =========================*/
 int server_handshake(int *to_client) {
   int from_client = server_setup();
-  open(form_client, O_WRONLY);
+  open(from_client, O_WRONLY);
 
   // send SYN ACK
   return from_client;
@@ -52,12 +52,14 @@ int server_handshake(int *to_client) {
   returns the file descriptor for the downstream pipe.
   =========================*/
 int client_handshake(int *to_server) {
+  // client creates private pipe with PID as name 
   char PP_name[100];
   sprintf(PP_name, "%d", getpid());
   if (mkfifo(PP_name, 0666) == -1) {
     perror("create PP fail");
     exit(1);
   }
+  // open WKP to write
   int from_server = open(WKP, O_WRONLY);
   if (from_server == -1) {
     perror("client fail to open WKP");
