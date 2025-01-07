@@ -7,18 +7,22 @@ int main() {
 
   from_server = client_handshake( &to_server );
   // write a byte to server
-  char message[] = "hello to server";
-  int bytes = write(to_server, message, sizeof(message));
-  if (bytes < 0) {
-    perror("client fail to write to server");
+  //char message = 'w';
+  //int bytesWritten = write(to_server, &message, sizeof(char));
+  //if (bytesWritten < 0) {
+  //  perror("client fail to write to server");
+  //  exit(1);
+  //}
+  //printf("client wrote %d bytes to server\n", bytesWritten);
+
+  // read a byte from server 
+  char buffer[BUFFER_SIZE];
+  int bytesRead = read(from_server, buffer, BUFFER_SIZE - 1);
+  if (bytesRead < 0) {
+    perror("client failed to read from server");
     exit(1);
   }
-  printf("client wrote '%s' (%d bytes)\n", message, bytes);
-  // read a byte from server 
-  //char buffer[BUFFER_SIZE];
-  //read(from_server, buffer, BUFFER_SIZE - 1);
-
-  //printf("client received message: %s\n", buffer);
+  printf("client read %d bytes from server\n", bytesRead);
 
   close(to_server);
   close(from_server);
