@@ -7,10 +7,17 @@ int main() {
   from_client = server_handshake( &to_client );
   char buffer[BUFFER_SIZE];
   // read a byte from client
-  read(from_client, buffer, BUFFER_SIZE);
+  int bytes = read(from_client, buffer, BUFFER_SIZE - 1);
+  if (bytes < 0) {
+    perror("fail to read from client");
+    exit(1);
+  }
+  printf("server read %d bytes from '%s'\n", bytes, buffer);
 
   // write a byte to client 
-  char message[BUFFER_SIZE] = "server received message: ";
-  strcat(message, buffer);
-  write(to_client, message, strlen(message) + 1);
+  printf("length: %d\n", strlen(buffer));
+  
+
+  close(to_client);
+  close(from_client);
 }
