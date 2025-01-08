@@ -1,9 +1,21 @@
 #include "pipe_networking.h"
 
-int main() {
 
-  int to_server;
-  int from_server;
+int to_server;
+int from_server;
+
+
+void sighandler(int signo) {
+  remove(WKP);
+  close(to_server);
+  close(from_server);
+  exit(0);
+}
+
+
+int main() {
+  signal(SIGINT, sighandler);
+  signal(SIGPIPE, sighandler);
 
   from_server = client_handshake( &to_server );
   
@@ -13,6 +25,10 @@ int main() {
     if (bytesRead < 0) {
       perror("client failed to read from server");
       exit(1);
+    }
+    else if (bytesRead == 0) {
+      printf("server disconnected\n");
+      exit(0);
     }
     printf("client received %s\n", buffer);
   }
