@@ -6,19 +6,16 @@ int from_server;
 
 
 void sighandler(int signo) {
-  remove(WKP);
   close(to_server);
   close(from_server);
+  printf("\nclient disconnected\n");
   exit(0);
 }
 
 
 int main() {
   signal(SIGINT, sighandler);
-  signal(SIGPIPE, sighandler);
-
-  from_server = client_handshake( &to_server );
-  
+  from_server = client_handshake(&to_server);
   while (1) {
     char buffer[BUFFER_SIZE];
     int bytesRead = read(from_server, buffer, BUFFER_SIZE - 1);
