@@ -27,7 +27,9 @@ int main() {
       printf("server disconnected\n");
       exit(0);
     }
-    printf("client received %s\n", buffer);
+    if (strlen(buffer) > 0) {
+      printf("client received %s\n", buffer);
+    }
   }
 
 
