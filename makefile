@@ -1,10 +1,16 @@
-all: client server
+all: client server persistent
 
 client: basic_client.o pipe_networking.o
 	gcc -o client basic_client.o pipe_networking.o
 
 server: forking_server.o pipe_networking.o
 	gcc -o server forking_server.o pipe_networking.o
+
+persistent: persistent_server.o pipe_networking.o
+	gcc -o persistent_server persistent_server.o pipe_networking.o
+
+persistent_server.o: persistent_server.c pipe_networking.h
+	gcc -c persistent_server.c
 
 basic_client.o: basic_client.c pipe_networking.h
 	gcc -c basic_client.c
