@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <errno.h>
-#include <signal.h>
+#include <signal.h> 
 #include <time.h> 
 
 #ifndef NETWORKING_H
@@ -32,6 +32,7 @@ int server_connect(int from_client);
 
 //for forking server
 int server_setup();
+void server_handshake_half(int *to_client, int from_client);
 
 //multi_server
 int multi_server_setup();
